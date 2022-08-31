@@ -12,8 +12,8 @@ const USERS_FROM_SERVER = [
 
 const USERS_FROM_CACHE = [
   {
-    name: 'Matthew',
-    age: 22,
+    name: 'Mark',
+    age: 32,
   },
 ];
 
@@ -42,10 +42,14 @@ describe('test getData hook when cache is empty', () => {
 });
 
 describe('test getData hook when cache is not empty and time since last refresh is less than 1 hour', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     const usersAsString: string = JSON.stringify(USERS_FROM_CACHE);
     await AsyncStorage.setItem('cachedData', usersAsString);
     await AsyncStorage.setItem('lastRefresh', `${new Date().getTime() - 6000}`);
+  });
+
+  afterAll(async () => {
+    await AsyncStorage.clear();
   });
 
   it('should return users from cache when the current time is lesser than the last refresh time by 1 hour', async function () {
@@ -68,6 +72,10 @@ describe('test getData hook when cache is not empty and time since last refresh 
       'lastRefresh',
       `${new Date().getTime() - 3700000}`,
     );
+  });
+
+  afterAll(async () => {
+    await AsyncStorage.clear();
   });
 
   it('should return users from server when the current time exceeds the last refresh time by 1 hour', async function () {
